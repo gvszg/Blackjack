@@ -75,7 +75,7 @@ module Hand
     end
 
     paper_numbers.select{|val| val == 'A'}.count.times do 
-      total -= 10 if total > 21
+      total -= 10 if total > Blackjack::BLACKJACK_AMOUNT
     end
   
     total
@@ -86,7 +86,7 @@ module Hand
   end
 
   def is_busted?
-    total > 21
+    total > Blackjack::BLACKJACK_AMOUNT
   end
 end
 
@@ -127,6 +127,9 @@ class Blackjack
   attr_accessor :deck, :player
   attr_reader :dealer
 
+  BLACKJACK_AMOUNT = 21
+  DEALER_HIT_MIN = 17
+
   def initialize
     @deck = Deck.new
     @player = Player.new("name")
@@ -151,20 +154,20 @@ class Blackjack
   end
 
   def blackjack_or_bust?(player_or_dealer)
-    if player_or_dealer == 21
+    if player_or_dealer == BLACKJACK_AMOUNT
       if player_or_dealer.is_a?(Dealer)
         puts "Sory, dealer hits blackjack. #{player.name} loses!"
       else
         puts "Congratulations, you hit blackjack! #{player.name} wins!"
       end
-      exit
+      play_again?
     elsif player_or_dealer.is_busted?
       if player_or_dealer.is_a?(Dealer)
-        puts "Luky, dealer busted. #{player.name} win!"
+        puts "Lucky, dealer busted. #{player.name} win!"
       else
         puts "Sorry, It busted. #{player.name} loses!" 
       end
-      exit
+      play_again?
     end
   end
 
@@ -207,7 +210,7 @@ class Blackjack
 
     blackjack_or_bust?(dealer)
 
-    while dealer.total < 17
+    while dealer.total < DEALER_HIT_MIN
       new_card = deck.deal_one
       puts "Dealing #{new_card} to dealer"
       dealer.add_card(new_card)
@@ -229,7 +232,27 @@ class Blackjack
     else
       puts "PUSH!"
     end
-    exit
+    play_again?
+  end
+
+  def play_again?
+    puts "Would you like to play again? (1)yes (2)exit"
+    
+    if gets.chomp == '1'
+      puts "New game starting..."
+      game_reset
+      start
+    else 
+      puts "Have Fun!"
+      puts "Good Bye!"
+      exit
+    end    
+  end
+
+  def game_reset
+    deck = Deck.new 
+    player.cards = []
+    dealer.cards = []   
   end
 
   def start
