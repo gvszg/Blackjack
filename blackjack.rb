@@ -24,13 +24,13 @@ def calculate_total(cards)
     else
       total += value.to_i
     end
+end
+  
+# another Ace value
+arr.select{|e| e == 'A'}.count.times do 
+  total -= 10 if total > 21
   end
   
-  # another Ace value
-  arr.select{|e| e == 'A'}.count.times do 
-    total -= 10 if total > 21
-  end
-
   total 
 end
 
@@ -61,24 +61,24 @@ while player_total < 21
   if player_do == 2
     puts "Player Stand"
     puts "-----------------------"
-    break
-  end
+  break
+end
 
   # player hit
-  new_card = cards.sample
-  puts "Dealing card to player #{suits.sample}-#{new_card}"
-  player_hands << new_card
-  player_total = calculate_total(player_hands)
-  puts "Player total now: #{player_total}"
-  puts "--------------------------"
-  if player_total == 21
-    puts "*v* Player won *v*"
-    exit
-  elsif player_total > 21
-    puts "Player Bust!"
-    puts "Good Luck!"
-    exit
-  end
+new_card = cards.sample
+puts "Dealing card to player #{suits.sample}-#{new_card}"
+player_hands << new_card
+player_total = calculate_total(player_hands)
+puts "Player total now: #{player_total}"
+puts "--------------------------"
+if player_total == 21
+  puts "*v* Player won *v*"
+  exit
+elsif player_total > 21
+  puts "Player Bust!"
+  puts "Good Luck!"
+  exit
+end
 end
 
 # dealer action
