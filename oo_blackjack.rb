@@ -99,6 +99,10 @@ class Player
     @name = name
     @cards = []
   end
+
+  def show_flop
+    show_hand
+  end
 end
 
 class Dealer
@@ -112,21 +116,132 @@ class Dealer
     @cards = []
   end
 
+  def show_flop
+    puts "----- Dealer's Hand -----"
+    puts "First card is hidden"
+    puts "Second card is #{cards[1]}"
+  end
+end
+
+class Blackjack
+  attr_accessor :deck, :player
+  attr_reader :dealer
+
+  def initialize
+    @deck = Deck.new
+    @player = Player.new("name")
+    @dealer = Dealer.new
+  end
+
+  def set_player_name
+    puts "What's your name?"
+    player.name = gets.chomp
+  end
+
+  def deal_cards
+    player.add_card(deck.deal_one)
+    dealer.add_card(deck.deal_one)
+    player.add_card(deck.deal_one)
+    dealer.add_card(deck.deal_one)
+  end
+
+  def show_flop
+    player.show_flop
+    dealer.show_flop
+  end
+
+  def blackjack_or_bust?(player_or_dealer)
+    if player_or_dealer == 21
+      if player_or_dealer.is_a?(Dealer)
+        puts "Sory, dealer hits blackjack. #{player.name} loses!"
+      else
+        puts "Congratulations, you hit blackjack! #{player.name} wins!"
+      end
+      exit
+    elsif player_or_dealer.is_busted?
+      if player_or_dealer.is_a?(Dealer)
+        puts "Luky, dealer busted. #{player.name} win!"
+      else
+        puts "Sorry, It busted. #{player.name} loses!" 
+      end
+      exit
+    end
+  end
+
+  def player_turn
+    puts "-------------------------"
+    puts "#{player.name}'s turn."
+
+    blackjack_or_bust?(player)
+
+    while !player.is_busted?
+      puts "What would you like to do? (1)hit (2)stay"
+      response = gets.chomp
+
+      if !['1', '2'].include?(response)
+        puts "Please enter 1 or 2 !"
+        next
+      end
+
+      if response == '2'
+        puts "#{player.name} chose to stay."
+        break
+      end
+
+      new_card = deck.deal_one
+      puts "Dealing #{new_card} to #{player.name}"
+      player.add_card(new_card)
+      puts "#{player.name}'s total is now: #{player.total}"
+      puts "-------------------------"
+
+      blackjack_or_bust?(player)
+    end
+
+    puts "#{player.name} stays at #{player.total}."
+    puts "-------------------------"
+  end
+
+  def dealer_turn
+    puts "-------------------------"
+    puts "Dealer's turn."
+
+    blackjack_or_bust?(dealer)
+
+    while dealer.total < 17
+      new_card = deck.deal_one
+      puts "Dealing #{new_card} to dealer"
+      dealer.add_card(new_card)
+      puts "Dealer total is now: #{dealer.total}"
+      puts "-------------------------"
+
+      blackjack_or_bust?(dealer)     
+    end
+
+    puts "Dealer stays at #{dealer.total}."
+    puts "-------------------------"
+  end
+
+  def who_won?
+    if player.total > dealer.total
+      puts "Congratulations, #{player.name} wins!"
+    elsif player.total < dealer.total 
+      puts "Sorry, #{player.name} loses!"
+    else
+      puts "PUSH!"
+    end
+    exit
+  end
+
+  def start
+    set_player_name
+    deal_cards
+    show_flop
+    player_turn
+    dealer_turn
+    who_won?
+  end
 end
 
 
-deck = Deck.new
-
-player = Player.new("AJ")
-player.add_card(deck.deal_one)
-player.add_card(deck.deal_one)
-player.add_card(deck.deal_one)
-player.show_hand
-player.total
-
-dealer = Dealer.new
-dealer.add_card(deck.deal_one)
-dealer.add_card(deck.deal_one)
-dealer.add_card(deck.deal_one)
-dealer.show_hand
-dealer.total
+game = Blackjack.new
+game.start
