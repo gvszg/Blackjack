@@ -154,19 +154,22 @@ class Blackjack
   end
 
   def blackjack_or_bust?(player_or_dealer)
-    if player_or_dealer == BLACKJACK_AMOUNT
+    if player_or_dealer.total == BLACKJACK_AMOUNT
       if player_or_dealer.is_a?(Dealer)
         puts "Sory, dealer hits blackjack. #{player.name} loses!"
       else
         puts "Congratulations, you hit blackjack! #{player.name} wins!"
       end
+
       play_again?
+
     elsif player_or_dealer.is_busted?
       if player_or_dealer.is_a?(Dealer)
-        puts "Lucky, dealer busted. #{player.name} win!"
+        puts "Lucky, dealer busted. #{player.name} wins!"
       else
         puts "Sorry, It busted. #{player.name} loses!" 
       end
+
       play_again?
     end
   end
@@ -238,7 +241,9 @@ class Blackjack
   def play_again?
     puts "Would you like to play again? (1)yes (2)exit"
     
-    if gets.chomp == '1'
+    response = gets.chomp
+
+    if response == '1'
       puts "New game starting..."
       game_reset
       start
@@ -246,7 +251,7 @@ class Blackjack
       puts "Have Fun!"
       puts "Good Bye!"
       exit
-    end    
+    end       
   end
 
   def game_reset
