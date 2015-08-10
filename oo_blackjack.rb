@@ -118,8 +118,8 @@ class Dealer
 
   def show_flop
     puts "----- Dealer's Hand -----"
-    puts "First card is hidden"
-    puts "Second card is #{cards[1]}"
+    puts "First card is #{cards[0]}"
+    puts "Second card is hidden"
   end
 end
 
@@ -244,7 +244,9 @@ class Blackjack
     response = gets.chomp
 
     if response == '1'
+      puts "--------------------"
       puts "New game starting..."
+      puts "--------------------"
       game_reset
       start
     else 
