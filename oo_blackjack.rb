@@ -243,12 +243,19 @@ class Blackjack
     
     response = gets.chomp
 
+    while !['1', '2'].include?(response)
+
+      puts "What would you like to do? (1)hit (2)stay"
+
+      response = gets.chomp
+
+    end
+
     if response == '1'
       puts "--------------------"
       puts "New game starting..."
       puts "--------------------"
-      game_reset
-      start
+      replay      
     else 
       puts "Have Fun!"
       puts "Good Bye!"
@@ -257,9 +264,18 @@ class Blackjack
   end
 
   def game_reset
-    deck = Deck.new 
+    self.deck = Deck.new 
     player.cards = []
     dealer.cards = []   
+  end
+
+  def replay
+    game_reset
+    deal_cards
+    show_flop
+    player_turn
+    dealer_turn
+    who_won?
   end
 
   def start
